@@ -147,7 +147,7 @@
             <div class="card special-message-card">
                 <div class="card-body p-4">
                     <p class="special-message" id="special-message-text"></p>
-                    <p class="special-details" id="special-details-text"></p>
+                    <div class="special-details" id="special-details-text"></div>
                 </div>
             </div>
         </div>
@@ -176,7 +176,6 @@
                         return response.json();
                     })
                     .then(data => {
-                        // البحث عن الطالب باستخدام رقم الهوية من حقل "الهوية"
                         const student = data.find(s => String(s['الهوية']) === studentId);
 
                         if (student) {
@@ -202,7 +201,6 @@
             });
 
             function displayStudentData(student) {
-                // تعبئة البيانات باستخدام الحقول العربية من ملف JSON
                 document.getElementById('student-name').textContent = student['الطالب'];
                 document.getElementById('absence').textContent = student['مجموع الغياب'];
                 document.getElementById('homework').textContent = student['الواجبات'];
@@ -216,11 +214,10 @@
                 document.getElementById('final_written_exam').textContent = student['التحريري النهائي'];
                 document.getElementById('final_total').textContent = student['المجموع النهائي'];
                 
-                // استنتاج حالة الطالب وتلوينها
                 const statusSpan = document.getElementById('status');
                 const studentResultText = student['النتيجة'];
                 let statusText = '';
-                statusSpan.className = 'badge'; // Reset class
+                statusSpan.className = 'badge'; 
 
                 if (studentResultText.includes('اجتزت المادة بجدارة')) {
                     statusText = 'ناجح';
@@ -234,22 +231,25 @@
                 }
                 statusSpan.textContent = statusText;
 
-                // عرض الرسالة الرئيسية من حقل "النتيجة"
                 document.getElementById('special-message-text').textContent = studentResultText;
                 
-                let detailsText = student['الرسالة'];
+                let detailsText = `<p>${student['الرسالة']}</p>`;
 
-                // إذا كان الطالب "لم يجتز"، يتم حساب الدرجات المطلوبة ديناميكيًا
                 if (statusText === 'لم يجتز') {
                     const currentScore = (student['المشاركة'] || 0) + (student['الواجبات'] || 0) + (student['نشاط وتطبيقات صفية'] || 0) + (student['البحث'] || 0);
                     const neededScore = 50 - currentScore;
                     
-                    // استخدام القالب الأصلي للرسالة مع القيم المحسوبة
-                    detailsText = `انتبه جيدًا: سيقوم نظام نور بإزالة درجات الاختبارات التحريرية والشفوية الحالية، والإبقاء على درجاتك في (المشاركة، الواجبات، النشاط، البحث) والتي يبلغ مجموعها الآن ${currentScore} درجة. وعليك الحصول على ${Math.max(0, neededScore)} من أصل 60 في الاختبار القادم لتتمكن من النجاح وتخطي المادة. لا تيأس، الفرصة أمامك متاحة وواضحة جدًا، أثق بقدرتك على اجتيازها.`;
+                    let dynamicMessage = `<p>انتبه جيدًا: سيقوم نظام نور بإزالة درجات الاختبارات التحريرية والشفوية الحالية، والإبقاء على درجاتك في (المشاركة، الواجبات، النشاط، البحث) والتي يبلغ مجموعها الآن ${currentScore} درجة. وعليك الحصول على ${Math.max(0, neededScore)} من أصل 60 في الاختبار القادم لتتمكن من النجاح وتخطي المادة. لا تيأس، الفرصة أمامك متاحة وواضحة جدًا، أثق بقدرتك على اجتيازها.</p>`;
+                    
+                    dynamicMessage += `<hr class="my-4">`;
+                    dynamicMessage += `<p class="fw-bold">ولمساعدتك على الاستعداد، يمكنك الاطلاع على تحديد الاختبار ومراجعة شاملة للمذاكرة:</p>`;
+                    dynamicMessage += `<a href="https://alothaimeen.github.io/megagoal1/guide.html" class="btn btn-success mt-2" target="_blank" rel="noopener noreferrer">اضغط هنا للانتقال إلى صفحة المراجعة</a>`;
+
+                    detailsText = dynamicMessage;
                 }
 
-                document.getElementById('special-details-text').textContent = detailsText;
-                
+                document.getElementById('special-details-text').innerHTML = detailsText;
+
                 inputCard.style.display = 'none';
                 resultContainer.style.display = 'block';
             }
