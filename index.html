@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض النتيجة النهائية</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .main-container { max-width: 800px; width: 100%; }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 1.5rem;
+            border-bottom: none;
+        }
+        .card-header h2 { font-weight: 900; }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+        .form-control {
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            text-align: center;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+            border-color: #80bdff;
+        }
+        #error-message { display: none; font-weight: 700; }
+        #result-container { display: none; }
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: none;
+            border-right: none;
+        }
+        .list-group-item:first-child { border-top-left-radius: 0; border-top-right-radius: 0; }
+        .list-group-item strong { color: #333; }
+        .badge { font-size: 1rem; padding: 0.5em 0.8em; }
+        .special-message-card {
+            margin-top: 1.5rem;
+            text-align: center;
+            background-color: #e9f5ff;
+            border: 1px solid #bde0fe;
+        }
+        .special-message { font-size: 1.75rem; font-weight: 900; color: #0056b3; }
+        .special-details { font-size: 1.1rem; color: #333; line-height: 1.8; }
+        .welcome-message {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            line-height: 1.9;
+            font-size: 1.1rem;
+            color: #343a40;
+        }
+        .welcome-message .teacher-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            display: block;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="welcome-message">
+            <p>مرحبًا أعزائي الطلاب 🌟،</p>
+            <p>سعيدٌ جدًا بما بذلتموه من جهد طوال هذا العام الدراسي، وقد كان لي شرف تعليمكم ومتابعة تقدمكم يومًا بيوم. أنتم الآن على وشك الانتقال إلى الصف الثاني ثانوي، وأتمنى أن تكون هذه النتيجة التي تشاهدونها اليوم خطوة جديدة نحو مستقبل باهر مليء بالنجاح والتفوق.</p>
+            <p>أيًا كانت نتيجتك اليوم، فاعلم أن النجاح الحقيقي هو استمرارك في التعلم والتطور وعدم الاستسلام لأي عقبات تواجهك. أثق بقدراتكم وأتمنى لكم كل التوفيق!</p>
+            <span class="teacher-name">🌟 أستاذكم محمد العثيمين</span>
+        </div>
+
+        <div class="card" id="input-card">
+            <div class="card-body p-4 p-md-5 text-center">
+                <h3 class="mb-4">عرض النتيجة النهائية</h3>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control form-control-lg" id="student-id" placeholder="أدخل رقم الهوية الوطنية" aria-label="رقم الهوية الوطنية">
+                </div>
+                <button class="btn btn-primary btn-lg" id="submit-btn">عرض النتيجة</button>
+                <div class="alert alert-danger mt-4" id="error-message">
+                    ⚠️ الرقم غير موجود. تأكد من صحته وأعد المحاولة.
+                </div>
+            </div>
+        </div>
+
+        <div id="result-container" class="mt-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 id="student-name"></h2>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>الغياب</strong> <span id="absence"></span></li>
+                        <li class="list-group-item"><strong>الواجبات (من 10)</strong> <span id="homework"></span></li>
+                        <li class="list-group-item"><strong>البحث (من 10)</strong> <span id="research"></span></li>
+                        <li class="list-group-item"><strong>الأنشطة والتطبيقات الصفية (من 10)</strong> <span id="activities"></span></li>
+                        <li class="list-group-item"><strong>المشاركة (من 10)</strong> <span id="participation"></span></li>
+                        <li class="list-group-item"><strong>الاختبار التحريري (من 10)</strong> <span id="written_test"></span></li>
+                        <li class="list-group-item"><strong>الاختبارات الشفوية (من 10)</strong> <span id="oral_tests"></span></li>
+                        <li class="list-group-item list-group-item-secondary"><strong>مجموع أعمال السنة (من 60)</strong> <span id="year_work_total" class="fw-bold"></span></li>
+                        <li class="list-group-item"><strong>الاختبار الشفوي النهائي (من 10)</strong> <span id="final_oral_exam"></span></li>
+                        <li class="list-group-item"><strong>الاختبار النهائي التحريري (من 30)</strong> <span id="final_written_exam"></span></li>
+                        <li class="list-group-item list-group-item-primary"><strong>المجموع النهائي (من 100)</strong> <span id="final_total" class="fw-bold fs-5"></span></li>
+                        <li class="list-group-item"><strong>حالة الطالب</strong> <span id="status" class="badge"></span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card special-message-card">
+                <div class="card-body p-4">
+                    <p class="special-message" id="special-message-text"></p>
+                    <p class="special-details" id="special-details-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const submitBtn = document.getElementById('submit-btn');
+            const studentIdInput = document.getElementById('student-id');
+            const errorContainer = document.getElementById('error-message');
+            const resultContainer = document.getElementById('result-container');
+            const inputCard = document.getElementById('input-card');
+
+            submitBtn.addEventListener('click', function () {
+                const studentId = studentIdInput.value;
+                if (!studentId) {
+                    alert('الرجاء إدخال رقم الهوية.');
+                    return;
+                }
+
+                fetch('students.json')
+                    .then(response => {
+                        if (!response.ok) { throw new Error('فشل تحميل ملف بيانات الطلاب.'); }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // البحث عن الطالب باستخدام رقم الهوية من حقل "الهوية"
+                        const student = data.find(s => String(s['الهوية']) === studentId);
+
+                        if (student) {
+                            displayStudentData(student);
+                            errorContainer.style.display = 'none';
+                        } else {
+                            resultContainer.style.display = 'none';
+                            errorContainer.style.display = 'block';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('خطأ في جلب البيانات:', error);
+                        errorContainer.textContent = 'حدث خطأ أثناء تحميل البيانات. الرجاء المحاولة مرة أخرى.';
+                        errorContainer.style.display = 'block';
+                    });
+            });
+            
+            studentIdInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    submitBtn.click();
+                }
+            });
+
+            function displayStudentData(student) {
+                // تعبئة البيانات باستخدام الحقول العربية من ملف JSON
+                document.getElementById('student-name').textContent = student['الطالب'];
+                document.getElementById('absence').textContent = student['مجموع الغياب'];
+                document.getElementById('homework').textContent = student['الواجبات'];
+                document.getElementById('research').textContent = student['البحث'];
+                document.getElementById('activities').textContent = student['نشاط وتطبيقات صفية'];
+                document.getElementById('participation').textContent = student['المشاركة'];
+                document.getElementById('written_test').textContent = student['الاختبار التحريري'];
+                document.getElementById('oral_tests').textContent = student['الشفوي'];
+                document.getElementById('year_work_total').textContent = student['المجموع'];
+                document.getElementById('final_oral_exam').textContent = student['النهائي الشفوي'];
+                document.getElementById('final_written_exam').textContent = student['التحريري النهائي'];
+                document.getElementById('final_total').textContent = student['المجموع النهائي'];
+                
+                // استنتاج حالة الطالب وتلوينها
+                const statusSpan = document.getElementById('status');
+                const studentResultText = student['النتيجة'];
+                let statusText = '';
+                statusSpan.className = 'badge'; // Reset class
+
+                if (studentResultText.includes('اجتزت المادة بجدارة')) {
+                    statusText = 'ناجح';
+                    statusSpan.classList.add('bg-success');
+                } else if (studentResultText.includes('تمت مساعدتك')) {
+                    statusText = 'ناجح بمساعدة';
+                    statusSpan.classList.add('bg-warning', 'text-dark');
+                } else if (studentResultText.includes('لم تجتز')) {
+                    statusText = 'لم يجتز';
+                    statusSpan.classList.add('bg-danger');
+                }
+                statusSpan.textContent = statusText;
+
+                // عرض الرسالة الرئيسية من حقل "النتيجة"
+                document.getElementById('special-message-text').textContent = studentResultText;
+                
+                let detailsText = student['الرسالة'];
+
+                // إذا كان الطالب "لم يجتز"، يتم حساب الدرجات المطلوبة ديناميكيًا
+                if (statusText === 'لم يجتز') {
+                    const currentScore = (student['المشاركة'] || 0) + (student['الواجبات'] || 0) + (student['نشاط وتطبيقات صفية'] || 0) + (student['البحث'] || 0);
+                    const neededScore = 50 - currentScore;
+                    
+                    // استخدام القالب الأصلي للرسالة مع القيم المحسوبة
+                    detailsText = `انتبه جيدًا: سيقوم نظام نور بإزالة درجات الاختبارات التحريرية والشفوية الحالية، والإبقاء على درجاتك في (المشاركة، الواجبات، النشاط، البحث) والتي يبلغ مجموعها الآن ${currentScore} درجة. وعليك الحصول على ${Math.max(0, neededScore)} من أصل 60 في الاختبار القادم لتتمكن من النجاح وتخطي المادة. لا تيأس، الفرصة أمامك متاحة وواضحة جدًا، أثق بقدرتك على اجتيازها.`;
+                }
+
+                document.getElementById('special-details-text').textContent = detailsText;
+                
+                inputCard.style.display = 'none';
+                resultContainer.style.display = 'block';
+            }
+        });
+    </script>
+
+</body>
+</html>
